@@ -56,6 +56,7 @@ export default class GallerySwiper extends PureComponent {
         maxOverScrollDistance: PropTypes.number,
         removeClippedSubviews: PropTypes.bool,
         imageComponent: PropTypes.func,
+        injectComponent: PropTypes.func,
         errorComponent: PropTypes.func,
         flatListProps: PropTypes.object,
         refPage: PropTypes.func
@@ -68,6 +69,7 @@ export default class GallerySwiper extends PureComponent {
         },
         initialNumToRender: 7,
         imageComponent: undefined,
+        injectComponent: undefined,
         scrollViewStyle: {},
         flatListProps: DEFAULT_FLAT_LIST_PROPS,
         onEndReachedThreshold: 0.5
@@ -300,10 +302,12 @@ export default class GallerySwiper extends PureComponent {
             onTransformGestureReleased, onSwipeUpReleased, onSwipeDownReleased, onDoubleTapStartReached,
             onDoubleTapEndReached, resizeMode, enableResistance, enableScale, maxScale, enableTranslate,
             resistantStrHorizontal, resistantStrVertical, maxOverScrollDistance, errorComponent,
-            imageComponent
+            imageComponent, injectComponent
         } = this.props;
+        
         return (
             <ImageTransformer
+                injectComponent={injectComponent}
                 onViewTransformed={(transform) => {
                     onViewTransformed &&
                         onViewTransformed(transform, pageId);

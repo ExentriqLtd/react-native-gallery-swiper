@@ -32,6 +32,10 @@ declare module 'react-native-gallery-swiper' {
     dimensions?: { width: number, height: number }
   }
 
+  export type InjectComponent = {
+    item: Object
+  }
+  
   type GallerySwiperProps = {
     images: ImageObj[],
     style?: ViewStyle,
@@ -70,7 +74,8 @@ declare module 'react-native-gallery-swiper' {
     imageComponent?: (imageProps: ImageProps, imageDimensions: {width: number, height: number}, index: number) => JSX.Element,
     errorComponent?: () => JSX.Element,
     flatListProps?: FlatListProps,
-    refPage?: (galleryViewPager: PageList) => void
+    refPage?: (galleryViewPager: PageList) => void,
+    injectComponent?: (item:any) => InjectComponent,
   };
 
   export default class GallerySwiper extends Component<GallerySwiperProps> {
