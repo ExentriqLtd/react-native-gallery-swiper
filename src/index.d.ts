@@ -75,7 +75,7 @@ declare module 'react-native-gallery-swiper' {
     errorComponent?: () => JSX.Element,
     flatListProps?: FlatListProps,
     refPage?: (galleryViewPager: PageList) => void,
-    injectComponent?: (item:any) => InjectComponent;
+    injectComponent?: (item:any) => InjectComponent,
   };
 
   export default class GallerySwiper extends Component<GallerySwiperProps> {
