@@ -93,7 +93,7 @@ export default class GallerySwiper extends PureComponent {
         this.getImageTransformer = this.getImageTransformer.bind(this);
         this.getViewPagerInstance = this.getViewPagerInstance.bind(this);
         this.activeImageResponder = this.activeImageResponder.bind(this);
-
+        this.activeZoom = false;
 
         let onResponderReleaseOrTerminate = (evt, gestureState) => {
             if (this.activeResponder) {
@@ -159,6 +159,7 @@ export default class GallerySwiper extends PureComponent {
             // Do not allow parent view to intercept gesture
             onResponderTerminationRequest: (evt, gestureState) => false,
             onResponderDoubleTapConfirmed: (evt, gestureState) => {
+                this.activeZoom = false;
                 this.props.onDoubleTapConfirmed &&
                     this.props.onDoubleTapConfirmed(this.currentPage);
             },
@@ -201,10 +202,12 @@ export default class GallerySwiper extends PureComponent {
                 clearTimeout(this._longPressTimeout);
             },
             onEnd: (evt, gestureState) => {
-                const currentImageTransformer = this.getCurrentImageTransformer();
-                currentImageTransformer &&
-                    currentImageTransformer.onResponderRelease(evt, gestureState);
-                clearTimeout(this._longPressTimeout);
+                if (!this.activeZoom) {
+                    const currentImageTransformer = this.getCurrentImageTransformer();
+                    currentImageTransformer &&
+                        currentImageTransformer.onResponderRelease(evt, gestureState);
+                  clearTimeout(this._longPressTimeout);    
+                }
             }
         };
     }
@@ -229,10 +232,10 @@ export default class GallerySwiper extends PureComponent {
         const space = viewTransformer.getAvailableTranslateSpace();
         const dx = gestureState.moveX - gestureState.previousMoveX;
 
-        if (dx > 0 && space.left <= 0 && this.currentPage > 0) {
+        if (dx < 0 && space.left <= 0 && this.currentPage < this.pageCount - 1) {
             return true;
         }
-        if (dx < 0 && space.right <= 0 && this.currentPage < this.pageCount - 1) {
+        if (dx > 0 && space.right <= 0 && this.currentPage > 0) {
             return true;
         }
         return false;
@@ -321,12 +324,17 @@ export default class GallerySwiper extends PureComponent {
                         onPinchStartReached(transform, pageId);
                 }}
                 onPinchEndReached={(transform) => {
+                    const { scale } = transform
+                    if (scale && scale <= 1) {
+                        this.activeZoom = false;
+                    }
+                    else if (scale && scale > 1) {
+                        this.activeZoom = true;
+                    }
                     onPinchEndReached &&
                         onPinchEndReached(transform, pageId);
                 }}
                 onTransformGestureReleased={(transform) => {
-                    // need the "return" here because the
-                    // return value is checked in ViewTransformer
                     return onTransformGestureReleased &&
                         onTransformGestureReleased(transform, pageId);
                 }}
@@ -341,7 +349,7 @@ export default class GallerySwiper extends PureComponent {
                 onDoubleTapStartReached={(transform) => {
                     onDoubleTapStartReached &&
                         onDoubleTapStartReached(transform, pageId);
-                }}
+                }} 
                 onDoubleTapEndReached={(transform) => {
                     onDoubleTapEndReached &&
                         onDoubleTapEndReached(transform, pageId);
