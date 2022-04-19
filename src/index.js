@@ -122,13 +122,13 @@ export default class GallerySwiper extends PureComponent {
             onResponderMove: (evt, gestureState) => {
                 if (this.firstMove) {
                     this.firstMove = false;
-                    if (this.shouldScrollViewPager(evt, gestureState)) {
-                        this.activeViewPagerResponder(evt, gestureState);
-                    }
+                     if (this.shouldScrollViewPager(evt, gestureState))  {    
+                         this.activeViewPagerResponder(evt, gestureState);
+                     }
                     this.props.onGalleryStateChanged &&
                         this.props.onGalleryStateChanged(false);
                 }
-                if (this.activeResponder === this.viewPagerResponder) {
+                    if (this.activeResponder === this.viewPagerResponder) {
                     const dx = gestureState.moveX - gestureState.previousMoveX;
                     const offset = this.getViewPagerInstance()
                         .getScrollOffsetFromCurrentPage();
@@ -152,6 +152,7 @@ export default class GallerySwiper extends PureComponent {
                         }
                     }
                 }
+                this.shouldScrollViewPager(evt, gestureState);
                 this.activeResponder.onMove(evt, gestureState);
             },
             onResponderRelease: onResponderReleaseOrTerminate,
@@ -231,11 +232,21 @@ export default class GallerySwiper extends PureComponent {
 
         const space = viewTransformer.getAvailableTranslateSpace();
         const dx = gestureState.moveX - gestureState.previousMoveX;
-
-        if (dx < 0 && space.left <= 0 && this.currentPage < this.pageCount - 1) {
+    
+     
+        if(dx > 0 && space.right < 0.5 && this.currentPage == 0){
+            this.activeViewPagerResponder(evt, gestureState);
+        }
+        if(dx < 0 && space.left <= 0.5  && this.currentPage == this.pageCount - 1){
+           
+            this.activeViewPagerResponder(evt, gestureState);
+        }
+        if (dx < 0 && space.left <= 0  && this.currentPage < this.pageCount - 1) {
+            this.activeViewPagerResponder(evt, gestureState);
             return true;
         }
         if (dx > 0 && space.right <= 0 && this.currentPage > 0) {
+            this.activeViewPagerResponder(evt, gestureState);
             return true;
         }
         return false;
@@ -255,7 +266,7 @@ export default class GallerySwiper extends PureComponent {
     activeViewPagerResponder (evt, gestureState) {
         if (this.activeResponder !== this.viewPagerResponder) {
             if (this.activeResponder === this.imageResponder) {
-                this.imageResponder.onEnd(evt, gestureState);
+                this.imageResponder.onEnd(evt, gestureState); 
             }
             this.activeResponder = this.viewPagerResponder;
             this.viewPagerResponder.onStart(evt, gestureState);
