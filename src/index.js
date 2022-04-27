@@ -229,23 +229,22 @@ export default class GallerySwiper extends PureComponent {
         if (!viewTransformer) {
             return false;
         }
-
+        
         const space = viewTransformer.getAvailableTranslateSpace();
         const dx = gestureState.moveX - gestureState.previousMoveX;
     
-     
         if(dx > 0 && space.right < 0.5 && this.currentPage == 0){
             this.activeViewPagerResponder(evt, gestureState);
         }
-        if(dx < 0 && space.left <= 0.5  && this.currentPage == this.pageCount - 1){
+        if(dx < 0 && space.left <= 0.5 && this.currentPage == this.pageCount - 1){
            
             this.activeViewPagerResponder(evt, gestureState);
         }
-        if (dx < 0 && space.left <= 0  && this.currentPage < this.pageCount - 1) {
+        if (dx < 0 && space.left <= 0 && (space.bottom == 0 && space.top == 0 || this.activeZoom)  && this.currentPage < this.pageCount - 1) {
             this.activeViewPagerResponder(evt, gestureState);
             return true;
         }
-        if (dx > 0 && space.right <= 0 && this.currentPage > 0) {
+        if (dx > 0 && space.right <= 0 && (space.bottom == 0 && space.top == 0 || this.activeZoom)  && this.currentPage > 0) {
             this.activeViewPagerResponder(evt, gestureState);
             return true;
         }
